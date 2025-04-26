@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Web Audio Stem Player</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    
+    <body>
+        <div class="stem-player-container">
+            <h1>Stem Player</h1> 
+    
+            <div class="song-selector">
+                <label for="song-select">Select Track:</label> 
+                <select id="song-select">
+                    <option value="">-- Choose a Track --</option>
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+                <div id="loading-indicator" class="loading" style="display: none;">Loading Audio...</div>
+            </div>
+    
+            <div id="controls" class="controls-disabled">
+                <div class="stem-buttons">
+                    <button id="vocals-btn" data-stem="vocals" aria-pressed="false" disabled>
+                        Vocals <span class="shortcut">(V)</span>
+                    </button>
+                    <button id="drums-btn" data-stem="drums" aria-pressed="false" disabled>
+                        Drums <span class="shortcut">(D)</span>
+                    </button>
+                    <button id="bass-btn" data-stem="bass" aria-pressed="false" disabled>
+                        Bass <span class="shortcut">(B)</span>
+                    </button>
+                    <button id="instruments-btn" data-stem="instruments" aria-pressed="false" disabled>
+                        Instruments <span class="shortcut">(I)</span>
+                    </button>
+                </div>
+    
+                <div class="visualizer-container">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+    
+                <div class="mix-button">
+                     <button id="full-mix-btn" disabled>Full Mix <span class="shortcut">(F)</span></button>
+                </div>
+    
+                 <div class="playback-info">
+                    <span id="status">Status: Idle</span>
+                    <span id="current-time">Time: 0:00</span>
+                </div>
+            </div>
+    
+            <div id="error-message" class="error" style="display: none;"></div>
+    
+        </div>
+    
+        <script src="script.js"></script>
+    </body>
+</html>
