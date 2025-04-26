@@ -47,12 +47,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Ensure full viewport height */
-    height: 100%; /* Added for iOS */
+    min-height: 100vh; /* Fallback for browsers not supporting dvh */
+    min-height: 100dvh; /* Dynamic viewport height */
+    height: 100%;     /* Use full dynamic height */
     line-height: 1.4;
     padding: 15px; /* Small padding around container */
     overflow: hidden; /* Prevent scrolling */
-    position: fixed; /* Extra insurance against scrolling */
+    /* No need for position: fixed if min-height is set correctly */
     width: 100%;
 }
 
@@ -65,15 +66,21 @@ body {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2), /* Base shadow */
                 inset 0 1px 1px var(--glass-highlight), /* Inner highlight */
                 inset 0 -1px 1px var(--glass-shadow); /* Inner shadow */
-    padding: 25px;
+    padding: 20px; /* Slightly reduced base padding */
     width: 100%;
     max-width: 400px; /* Smaller max-width for phone-like aspect */
-    aspect-ratio: 3 / 4; /* Maintain a taller aspect ratio */
+    /* REMOVED aspect-ratio */
+    max-height: 95vh; /* Limit height to viewport height */
+    max-height: 95dvh; /* Use dynamic viewport height */
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Push header/footer */
+    justify-content: space-between; /* Keep header/footer apart */
     position: relative;
     transition: box-shadow 0.4s ease;
+    overflow-y: auto; /* Allow internal scroll ONLY if content exceeds max-height */
+    /* Optional: Add subtle scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-secondary) transparent;
 }
 
 /* --- Header --- */
@@ -81,8 +88,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px; /* Reduced */
     padding: 0 5px;
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .logo {
@@ -108,15 +116,16 @@ body {
 
 /* --- Song Selector --- */
 .song-selector {
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Reduced */
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 #song-select {
     width: 100%;
-    padding: 12px 18px;
+    padding: 10px 15px; /* Adjusted */
     border: 1px solid var(--control-border);
     border-radius: 10px;
-    font-size: 0.95rem;
+    font-size: 0.9rem; /* Adjusted */
     font-weight: 400;
     background-color: var(--control-bg);
     color: var(--text-primary);
@@ -138,13 +147,16 @@ body {
 
 /* --- Core Controls Area --- */
 #controls {
-    flex-grow: 1; /* Take remaining space */
+    flex-grow: 1; /* Allow this area to take up remaining vertical space */
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center items vertically */
+    justify-content: center; /* Center items within this growing space */
+    align-items: center; /* Center horizontally */
     opacity: 1;
     transition: opacity 0.4s ease, filter 0.4s ease;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Reduced */
+    min-height: 0; /* Allow flex item to shrink properly */
+    width: 100%; /* Ensure it spans width */
 }
 
 #controls.controls-disabled {
@@ -158,32 +170,32 @@ body {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    height: 45px;
-    margin-bottom: 25px;
-    gap: 4px; /* Reduced gap */
+    height: 40px; /* Base height */
+    margin-bottom: 20px; /* Reduced */
+    gap: 4px;
     transition: opacity 0.3s ease;
-    opacity: 0.4; /* Dimmer when idle */
-    width: 80%; /* Relative width */
-    margin-left: auto; /* Center it */
+    opacity: 0.4;
+    width: clamp(150px, 70%, 250px); /* Responsive width */
+    margin-left: auto;
     margin-right: auto;
+    flex-shrink: 0; /* Don't let it shrink */
 }
 
 body.playing .visualizer-container { opacity: 0.9; }
 
 .visualizer-container .bar {
-    width: 5px; /* Thinner bars */
-    background: linear-gradient(to top, var(--mix-color-1), var(--mix-color-2), var(--instruments-color)); /* More colorful gradient */
+    width: clamp(3px, 1.5vw, 5px); /* Responsive width */
+    background: linear-gradient(to top, var(--mix-color-1), var(--mix-color-2), var(--instruments-color));
     border-radius: 2px 2px 0 0;
     height: 5%;
     animation: visualizer-pulse 1.1s ease-in-out infinite alternate;
     transform-origin: bottom;
 }
-
 /* Stagger animation delays (More bars) */
 .visualizer-container .bar:nth-child(4n+1) { animation-delay: -0.7s; }
 .visualizer-container .bar:nth-child(4n+2) { animation-delay: -0.5s; }
 .visualizer-container .bar:nth-child(4n+3) { animation-delay: -0.3s; }
-.visualizer-container .bar:nth-child(4n+4) { animation-delay: -0.5s; } /* Mirror */
+.visualizer-container .bar:nth-child(4n+4) { animation-delay: -0.5s; }
 
 @keyframes visualizer-pulse {
     0%, 100% { height: 5%; opacity: 0.3; }
@@ -197,18 +209,21 @@ body:not(.playing) .visualizer-container .bar {
 /* --- Stem Buttons (Grid) --- */
 .stem-buttons {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Always 2x2 */
-    gap: 18px; /* Increased gap */
-    margin-bottom: 25px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px; /* Base gap */
+    margin-bottom: 20px; /* Reduced */
+    width: 100%;
+    max-width: 280px; /* Limit max width of button grid */
+    flex-shrink: 0;
 }
 
 .stem-buttons button {
-    aspect-ratio: 1 / 1; /* Force square shape */
-    font-size: 0.75rem; /* Smaller text */
+    aspect-ratio: 1 / 1;
+    font-size: clamp(0.6rem, 2.5vh, 0.75rem); /* Responsive font size */
     font-weight: 600;
     letter-spacing: 0.5px;
     border: none;
-    border-radius: 18px; /* More rounded squares */
+    border-radius: 18px;
     cursor: pointer;
     background: var(--button-inactive-bg);
     color: var(--text-secondary);
@@ -216,58 +231,53 @@ body:not(.playing) .visualizer-container .bar {
     transition: all 0.15s ease-out;
     position: relative;
     overflow: hidden;
-    display: flex; /* Center text */
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-transform: uppercase;
+    padding: 5px; /* Add some padding */
 }
-
 .stem-buttons button .shortcut { display: block; font-size: 0.8em; opacity: 0.6; margin-top: 3px;}
-
 .stem-buttons button:hover:not([disabled]):not(.active) {
     background: linear-gradient(145deg, rgba(60, 65, 80, 0.8), rgba(50, 55, 70, 0.8));
     color: var(--text-primary);
-    transform: scale(1.02); /* Slight grow */
+    transform: scale(1.02);
 }
-
 .stem-buttons button:active:not([disabled]) {
-    transform: scale(0.96); /* Push in effect */
+    transform: scale(0.96);
     box-shadow: inset 4px 4px 6px rgba(0,0,0,0.3), inset -4px -4px 6px rgba(255,255,255,0.08);
 }
-
 .stem-buttons button[disabled] { cursor: not-allowed; opacity: 0.5; }
-
-/* Active state for stem buttons - Neumorphic Pressed + Glow */
 .stem-buttons button.active {
     color: var(--text-accent);
     font-weight: 700;
-    transform: scale(1.01); /* Slightly larger */
-    box-shadow: var(--button-active-shadow), /* Outset shadow */
-                0 0 15px var(--glow-color, #fff), /* Outer Glow */
-                0 0 8px var(--glow-color, #fff) inset; /* Inner Glow */
-    background: var(--active-bg-color, #555); /* Set via specific rule */
+    transform: scale(1.01);
+    box-shadow: var(--button-active-shadow),
+                0 0 15px var(--glow-color, #fff),
+                0 0 8px var(--glow-color, #fff) inset;
+    background: var(--active-bg-color, #555);
 }
-
-/* Assign specific colors and glow vars */
 #vocals-btn.active { --glow-color: var(--vocals-color); --active-bg-color: var(--vocals-color); }
-#drums-btn.active { --glow-color: var(--drums-color); --active-bg-color: var(--drums-color); color: #222; /* Darker text on yellow */ }
+#drums-btn.active { --glow-color: var(--drums-color); --active-bg-color: var(--drums-color); color: #222; }
 #bass-btn.active { --glow-color: var(--bass-color); --active-bg-color: var(--bass-color); }
-#instruments-btn.active { --glow-color: var(--instruments-color); --active-bg-color: var(--instruments-color); color: #222; /* Darker text on bright green */ }
+#instruments-btn.active { --glow-color: var(--instruments-color); --active-bg-color: var(--instruments-color); color: #222; }
 
 /* --- Full Mix Button --- */
 .mix-button {
-    display: flex; /* Center button */
+    display: flex;
     justify-content: center;
+    margin-top: -5px; /* Pull slightly closer to grid */
+    flex-shrink: 0;
 }
 
 #full-mix-btn {
-    width: 70px; /* Diameter */
-    height: 70px; /* Diameter */
-    font-size: 0.8rem;
+    width: clamp(55px, 15vh, 70px); /* Responsive size */
+    height: clamp(55px, 15vh, 70px); /* Responsive size */
+    font-size: clamp(0.7rem, 2vh, 0.8rem); /* Responsive font size */
     font-weight: 700;
     border: none;
-    border-radius: 50%; /* Perfect circle */
+    border-radius: 50%;
     cursor: pointer;
     background: linear-gradient(145deg, var(--mix-color-1), var(--mix-color-2));
     color: var(--text-accent);
@@ -281,19 +291,15 @@ body:not(.playing) .visualizer-container .bar {
     text-transform: uppercase;
 }
 #full-mix-btn .shortcut { display: block; font-size: 0.8em; opacity: 0.6; }
-
-
 #full-mix-btn:hover:not([disabled]) {
     transform: scale(1.05);
     box-shadow: 8px 8px 15px rgba(0,0,0,0.35), -8px -8px 15px rgba(255,255,255,0.1),
-                0 0 20px color-mix(in srgb, var(--mix-color-1) 60%, var(--mix-color-2) 40%); /* Mix glow */
+                0 0 20px color-mix(in srgb, var(--mix-color-1) 60%, var(--mix-color-2) 40%);
 }
-
 #full-mix-btn:active:not([disabled]) {
     transform: scale(0.95);
      box-shadow: inset 4px 4px 8px rgba(0,0,0,0.3), inset -4px -4px 8px rgba(255,255,255,0.1);
 }
-
 #full-mix-btn[disabled] {
     cursor: not-allowed; opacity: 0.5;
     background: #444;
@@ -303,14 +309,14 @@ body:not(.playing) .visualizer-container .bar {
 
 /* --- Footer --- */
 .player-footer {
-    margin-top: 15px; /* Space above footer */
-    font-size: 0.85rem;
+    margin-top: 10px; /* Reduced */
+    font-size: 0.8rem; /* Base size */
     color: var(--text-secondary);
     display: flex;
     justify-content: space-between;
-    padding: 5px 10px;
-    border-top: 1px solid var(--container-border); /* Subtle divider */
-    padding-top: 10px;
+    padding: 8px 10px 5px 10px; /* Adjusted padding */
+    border-top: 1px solid var(--container-border);
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 #current-time {
@@ -323,58 +329,95 @@ body:not(.playing) .visualizer-container .bar {
 .error {
     color: var(--vocals-color); /* Use stem color */
     background-color: rgba(255, 95, 87, 0.1);
-    padding: 10px 12px;
+    padding: 8px 10px; /* Reduced padding */
     border-radius: 8px;
     border: 1px solid rgba(255, 95, 87, 0.4);
     font-weight: 400;
-    font-size: 0.9rem;
+    font-size: 0.85rem; /* Adjusted */
     text-align: center;
-    /* Positioning for overlay (optional) */
     position: absolute;
-    bottom: 15px; /* Position near bottom */
+    bottom: 45px; /* Position above footer+credit */
     left: 15px;
     right: 15px;
-    z-index: 10; /* Ensure it's above footer if overlapping */
+    z-index: 10;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    /* Initially hide it better */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
 }
+.error:not([style*="display: none"]) { /* Show when not hidden by JS */
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
 
 /* --- Made By Credit --- */
 .made-by-credit {
-    font-size: 0.7rem; /* Small font size */
-    color: var(--text-secondary); /* Subtle color */
-    text-align: center; /* Center the text */
+    font-size: 0.65rem; /* Base size */
+    color: var(--text-secondary);
+    text-align: center;
     width: 100%;
-    position: absolute; /* Position relative to the container */
-    bottom: 10px; /* Place it near the bottom edge */
-    left: 0;
-    right: 0;
-    opacity: 0.6; /* Make it less prominent */
-    pointer-events: none; /* Ensure it doesn't interfere with clicks */
+    padding-bottom: 5px; /* Space from bottom edge */
+    opacity: 0.6;
+    pointer-events: none;
+    flex-shrink: 0; /* Prevent shrinking */
+     /* Position relative to flow */
+    margin-top: 5px; /* Space above */
 }
 
 .made-by-credit .heart {
-    color: var(--vocals-color); /* Use a stem color for the heart */
-    display: inline-block; /* Prevents weird line breaks */
-    font-size: 0.8rem; /* Slightly larger heart */
+    color: var(--vocals-color);
+    display: inline-block;
+    font-size: 0.75rem;
 }
 
-/* Adjust footer padding if needed to avoid overlap */
-.player-footer {
-    padding-bottom: 15px; /* Add padding below status/time */
-}
 
-/* --- Responsive Refinements (Minor needed due to fixed layout) --- */
-@media (max-height: 600px) { /* Adjust for shorter screens */
-    .stem-player-container {
-        padding: 20px;
-        border-radius: 20px;
-        max-width: 360px; /* Slightly narrower */
-    }
-    .visualizer-container { height: 35px; margin-bottom: 20px; }
-    .stem-buttons { gap: 15px; margin-bottom: 20px; }
-    #full-mix-btn { width: 60px; height: 60px; }
-    .player-footer { margin-top: 10px; padding-top: 8px; font-size: 0.8rem; }
+/* --- Height-Based Responsive Adjustments --- */
+@media (max-height: 700px) {
+    .stem-player-container { padding: 15px; border-radius: 20px; }
     .logo { font-size: 1rem; }
+    #song-select { padding: 9px 15px; font-size: 0.85rem; padding-right: 35px; } /* Added padding-right */
+    .visualizer-container { height: 35px; margin-bottom: 15px; }
+    .stem-buttons { gap: 12px; margin-bottom: 15px; max-width: 260px;}
+    #controls { margin-bottom: 10px; }
+    .player-footer { font-size: 0.75rem; margin-top: 8px; padding-top: 8px; }
+    .error { bottom: 40px; font-size: 0.8rem;}
+    .made-by-credit { font-size: 0.6rem; }
 }
 
+@media (max-height: 600px) {
+     :root { /* Smaller base sizes */
+        --button-inactive-shadow: inset 2px 2px 4px rgba(0,0,0,0.2), inset -2px -2px 4px rgba(255,255,255,0.05);
+        --button-active-shadow: 1px 1px 3px rgba(0,0,0,0.3), -1px -1px 3px rgba(255,255,255,0.1);
+    }
+    .stem-player-container { padding: 12px; border-radius: 18px; }
+    .logo { display: none; } /* Hide logo */
+    .player-header { margin-bottom: 8px; justify-content: flex-end; /* Move loading indicator right */}
+    #song-select { padding: 8px 12px; padding-right: 35px; font-size: 0.8rem;} /* Adjusted padding */
+    .visualizer-container { height: 30px; margin-bottom: 12px; }
+    .stem-buttons { gap: 10px; margin-bottom: 12px; max-width: 240px; }
+    .stem-buttons button { border-radius: 15px; }
+    .mix-button { margin-top: 0; }
+    .player-footer { margin-top: 5px; padding-top: 6px; }
+    .error { bottom: 35px; }
+    .made-by-credit { display: none; } /* Hide credit on very short screens */
+}
 
+/* Optional: Further refinements for very narrow/wide but short screens */
+@media (max-height: 600px) and (max-width: 350px) {
+    .stem-player-container { padding: 10px; }
+    .stem-buttons { gap: 8px; }
+}
+
+/* Ensure the credit line respects footer padding */
+.player-footer {
+    padding-bottom: 5px; /* Adjust space above credit */
+}
+/* Ensure error message is above footer+credit */
+.error {
+    /* Adjust 'bottom' based on final footer/credit height on different screens */
+    /* Base value already set, potentially adjust in media queries if needed */
+}
