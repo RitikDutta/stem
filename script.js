@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Configuration (Keep as is) ---
     const songs = {
         'Stronger': 'songA',
-        'Song B': 'songB',
+        'Doechii - Anxiety': 'songB',
         'Song C': 'songC'
     };
     const stemTypes = ['vocals', 'drums', 'bass', 'instruments'];
