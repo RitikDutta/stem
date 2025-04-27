@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Configuration (Keep as is) ---
     const songs = {
-        'Stronger': 'songA',
+        'David Guetta - Titanium': 'songA',
         'Doechii - Anxiety': 'songB',
         'Ed Sheeran - Shape of You': 'songC',
         'Charlie Puth - We Dont Talk Anymore': 'songD'
