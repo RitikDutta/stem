@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const songs = {
         'Stronger': 'songA',
         'Doechii - Anxiety': 'songB',
-        'Song C': 'songC'
+        'Ed Sheeran - Shape of You': 'songC',
+        'Charlie Puth - We Dont Talk Anymore': 'songC'
     };
     const stemTypes = ['vocals', 'drums', 'bass', 'instruments'];
     const audioFolderPath = 'public/audio/';
